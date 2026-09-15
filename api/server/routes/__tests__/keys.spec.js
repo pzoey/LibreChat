@@ -13,9 +13,14 @@ jest.mock('~/server/middleware', () => ({
   requireJwtAuth: (req, res, next) => next(),
 }));
 
+jest.mock('~/server/services/Config/app', () => ({
+  getAppConfig: jest.fn(),
+}));
+
 describe('Keys Routes', () => {
   let app;
   const { updateUserKey, deleteUserKey, getUserKeyExpiry } = require('~/models');
+  const { getAppConfig } = require('~/server/services/Config/app');
 
   beforeAll(() => {
     const keysRouter = require('../keys');
@@ -33,9 +38,24 @@ describe('Keys Routes', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    getAppConfig.mockResolvedValue({});
   });
 
   describe('PUT /', () => {
+    it('rejects key management when the administrator disables user-provided keys', async () => {
+      getAppConfig.mockResolvedValue({ interfaceConfig: { userProvidedKeys: false } });
+
+      const response = await request(app)
+        .put('/api/keys')
+        .send({ name: 'openAI', value: 'sk-test-key-123' });
+
+      expect(response.status).toBe(403);
+      expect(response.body).toEqual({
+        error: 'User-provided API keys are disabled by the administrator.',
+      });
+      expect(updateUserKey).not.toHaveBeenCalled();
+    });
+
     it('should update a user key with the authenticated user ID', async () => {
       updateUserKey.mockResolvedValue({});
 

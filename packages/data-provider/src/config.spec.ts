@@ -1457,3 +1457,20 @@ describe('MCP UI refresh configuration', () => {
     ).toBe(false);
   });
 });
+
+describe('server-managed provider keys', () => {
+  it('allows user-provided provider keys by default for existing deployments', () => {
+    const result = configSchema.parse({ version: '1.3.5', interface: {} });
+
+    expect(result.interface?.userProvidedKeys).toBe(true);
+  });
+
+  it('accepts disabling user-provided provider keys', () => {
+    const result = configSchema.parse({
+      version: '1.3.5',
+      interface: { userProvidedKeys: false },
+    });
+
+    expect(result.interface?.userProvidedKeys).toBe(false);
+  });
+});

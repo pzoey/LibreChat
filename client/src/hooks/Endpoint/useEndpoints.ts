@@ -101,6 +101,12 @@ export const useEndpoints = ({
       if (endpoints[i] === EModelEndpoint.agents && !hasAgentAccess) {
         continue;
       }
+      if (
+        interfaceConfig.userProvidedKeys === false &&
+        getEndpointField(endpointsConfig, endpoints[i], 'userProvide')
+      ) {
+        continue;
+      }
       if (includedEndpoints.size > 0 && !includedEndpoints.has(endpoints[i])) {
         continue;
       }
@@ -108,7 +114,7 @@ export const useEndpoints = ({
     }
 
     return result;
-  }, [endpoints, hasAgentAccess, includedEndpoints, interfaceConfig.modelSelect]);
+  }, [endpoints, endpointsConfig, hasAgentAccess, includedEndpoints, interfaceConfig]);
 
   const endpointRequiresUserKey = useCallback(
     (ep: string) => {
