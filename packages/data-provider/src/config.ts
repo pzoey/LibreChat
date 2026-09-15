@@ -2010,6 +2010,8 @@ export const interfaceSchema = z
     termsOfService: termsOfServiceSchema.optional(),
     customWelcome: z.string().optional(),
     mcpServers: mcpServersSchema.optional(),
+    /** Allow users to store provider credentials for endpoints configured with `userProvide`. */
+    userProvidedKeys: z.boolean().default(true),
     modelSelect: z.boolean().optional(),
     parameters: z.boolean().optional(),
     multiConvo: z.boolean().optional(),

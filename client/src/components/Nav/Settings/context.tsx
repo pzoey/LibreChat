@@ -38,7 +38,9 @@ export function useSettingsContext(): SettingsContextValue {
   const hasMultiConvoBool = hasMultiConvo === true;
   const hasPromptsBool = hasPrompts === true;
   const engineTTS = useRecoilValue<string>(store.engineTTS);
-  const hasUserProvidedEndpoints = useProviderKeys().length > 0;
+  const userKeyEndpoints = useProviderKeys();
+  const hasUserProvidedEndpoints =
+    startupConfig?.interface?.userProvidedKeys !== false && userKeyEndpoints.length > 0;
   const hasStatefulCodeSessions =
     agentsConfig?.capabilities.includes(AgentCapabilities.stateful_code_sessions) ?? false;
 
